@@ -6,7 +6,7 @@ module Api
       def index
         @members = ::Member.all
 
-        render json: ::MemberSerializer.new(@members, { is_collection: true })
+        render json: ::MembersSerializer.new(@members, { is_collection: true })
       end
 
       def show

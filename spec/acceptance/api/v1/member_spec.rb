@@ -11,18 +11,6 @@ resource 'api/v1/member' do
   let(:user) { FactoryBot.create(:user) }
   let(:bearer_token) { jwt_bearer_token(user) }
   let(:raw_post) { params.to_json }
-  let(:rick) { { 'name' => 'Rick Sanchez', 'url' => 'https://dimension-c-137.org/rick-sanchez' } }
-  let(:morty) { { 'name' => 'Morty Smith', 'url' => 'https://dimension-c-137.org/morty-smith' } }
-  let(:member) { create(:member, url: 'https://nokogiri.org') }
-  let(:member_creation) do
-    Sidekiq::Testing.fake!
-    Sidekiq::Worker.clear_all
-
-    member
-
-    Sidekiq::Worker.drain_all
-    member.reload
-  end
 
   explanation 'Member management'
 
@@ -31,6 +19,9 @@ resource 'api/v1/member' do
   header 'Authorization', :bearer_token
 
   post '/api/v1/members' do
+    let(:name) { 'Rick Sanchez' }
+    let(:url) { 'https://dimension-c-137.org/rick-sanchez' }
+
     with_options scope: :data, with_example: true do
       parameter :name, 'The name of the Member', required: true
       parameter :url, 'The website URL of the Member', required: true
@@ -42,8 +33,8 @@ resource 'api/v1/member' do
           data: {
             type: 'member',
             attributes: {
-              name: rick['name'],
-              url: rick['url']
+              name: name,
+              url: url
             }
           }
         }
@@ -53,10 +44,10 @@ resource 'api/v1/member' do
           data: {
             type: 'member',
             attributes: {
-              friend_count: 0,
-              name: rick['name'],
+              friends_count: 0,
+              name: name,
               short_url: nil,
-              url: rick['url']
+              url: url
             }
           }
         }
@@ -75,7 +66,7 @@ resource 'api/v1/member' do
           data: {
             type: 'member',
             attributes: {
-              name: rick['name']
+              name: name
             }
           }
         }
@@ -102,6 +93,21 @@ resource 'api/v1/member' do
   end
 
   get '/api/v1/members/:id' do
+    let(:member) { create(:member, url: 'https://nokogiri.org') }
+    let(:other_member) { create(:member, url: 'https://www.ruby-lang.org') }
+    let(:yet_another_member) { create(:member, url: 'https://guides.rubyonrails.org') }
+    let(:member_creation) do
+      Sidekiq::Testing.fake!
+      Sidekiq::Worker.clear_all
+
+      member
+      member.friends << other_member
+      member.friends << yet_another_member
+
+      Sidekiq::Worker.drain_all
+      member.reload
+    end
+
     with_options scope: :data, with_example: true do
       parameter :id, 'The member\'s UUID', required: true
     end
@@ -113,7 +119,9 @@ resource 'api/v1/member' do
             id: member.id,
             type: 'member',
             attributes: {
-              friend_count: member.friends.size,
+              friends_count: member.friends.size,
+              friends_pages: member.friends.pluck(:url),
+              headings: member.headings.pluck(:text),
               name: member.name,
               short_url: member.short_url,
               url: member.url
