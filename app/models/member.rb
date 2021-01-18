@@ -5,8 +5,8 @@ class Member < ApplicationRecord
   validates :url, presence: true, url: true
 
   has_many :friendships
-  has_many :friends, through: :friendships, dependent: :destroy
-  has_many :headings, inverse_of: :member, dependent: :destroy
+  has_many :friends, -> { order(:name) }, through: :friendships, dependent: :destroy
+  has_many :headings, -> { order(:text) }, inverse_of: :member, dependent: :destroy
 
   private
 
