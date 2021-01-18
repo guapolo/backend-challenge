@@ -3,5 +3,7 @@
 scope :api do
   namespace :v1 do
     post :authenticate, controller: :authentication, action: :create
+
+    resources :members
   end
 end

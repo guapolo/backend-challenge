@@ -15,6 +15,18 @@ errors: &errors
     :detail: Something went wrong. Did you forget to say "please"?
     :http_status: bad_request
     :title: An error happened
+  '100':
+    :detail: Unable to create member.
+    :http_status: unprocessable_entity
+    :title: Member creation failed
+  '101':
+    :detail: Unable to find member.
+    :http_status: not_found
+    :title: Member not found
+  '102':
+    :detail: Unable to update member.
+    :http_status: unprocessable_entity
+    :title: Member update failed
   '666':
     :detail: Wrong username or password.
     :http_status: unauthorized
