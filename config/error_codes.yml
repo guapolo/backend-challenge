@@ -27,6 +27,10 @@ errors: &errors
     :detail: Unable to update member.
     :http_status: unprocessable_entity
     :title: Member update failed
+  '200':
+    :detail: Unable to make friends :'(
+    :http_status: unprocessable_entity
+    :title: Friendship creation failed
   '666':
     :detail: Wrong username or password.
     :http_status: unauthorized
