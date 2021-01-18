@@ -9,11 +9,9 @@ RSpec.describe Member, type: :model do
   end
 
   describe 'Relations' do
-    it do
-      is_expected.to have_many(:headings)
-                      .dependent(:destroy)
-                      .inverse_of(:member)
-    end
+    it { is_expected.to have_many(:friendships) }
+    it { is_expected.to have_many(:friends).dependent(:destroy).through(:friendships) }
+    it { is_expected.to have_many(:headings).dependent(:destroy).inverse_of(:member) }
   end
 
   describe 'callbacks' do
@@ -69,6 +67,20 @@ RSpec.describe Member, type: :model do
         expect(member.short_url).to be_present
         expect(member.short_url).to eq expected_short_url
       end
+    end
+  end
+
+  describe 'frienship reciprocity' do
+    let(:member) { create(:member) }
+    let(:other_member) { create(:member) }
+
+    before do
+      member.friends << other_member
+    end
+
+    it 'is reciprocal' do
+      expect(member.friends).to eq [other_member]
+      expect(other_member.friends).to eq [member]
     end
   end
 end

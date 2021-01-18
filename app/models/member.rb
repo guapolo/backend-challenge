@@ -4,7 +4,9 @@ class Member < ApplicationRecord
   validates :name, presence: true
   validates :url, presence: true, url: true
 
-  has_many :headings, dependent: :destroy, inverse_of: :member
+  has_many :friendships
+  has_many :friends, through: :friendships, dependent: :destroy
+  has_many :headings, inverse_of: :member, dependent: :destroy
 
   private
 

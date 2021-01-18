@@ -40,6 +40,52 @@ CREATE TABLE public.ar_internal_metadata (
 
 
 --
+-- Name: friendships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.friendships (
+    id bigint NOT NULL,
+    member_id uuid NOT NULL,
+    friend_id uuid NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: COLUMN friendships.member_id; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.friendships.member_id IS 'Member UUID';
+
+
+--
+-- Name: COLUMN friendships.friend_id; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN public.friendships.friend_id IS 'Friend UUID';
+
+
+--
+-- Name: friendships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.friendships_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: friendships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.friendships_id_seq OWNED BY public.friendships.id;
+
+
+--
 -- Name: headings; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -158,6 +204,13 @@ COMMENT ON COLUMN public.users.password_digest IS 'User password';
 
 
 --
+-- Name: friendships id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships ALTER COLUMN id SET DEFAULT nextval('public.friendships_id_seq'::regclass);
+
+
+--
 -- Name: headings id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -170,6 +223,14 @@ ALTER TABLE ONLY public.headings ALTER COLUMN id SET DEFAULT nextval('public.hea
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: friendships friendships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT friendships_pkey PRIMARY KEY (id);
 
 
 --
@@ -205,6 +266,27 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: index_friendships_on_friend_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendships_on_friend_id ON public.friendships USING btree (friend_id);
+
+
+--
+-- Name: index_friendships_on_member_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_friendships_on_member_id ON public.friendships USING btree (member_id);
+
+
+--
+-- Name: index_friendships_on_member_id_and_friend_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_friendships_on_member_id_and_friend_id ON public.friendships USING btree (member_id, friend_id);
+
+
+--
 -- Name: index_headings_on_member_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -226,11 +308,27 @@ CREATE UNIQUE INDEX index_users_on_login ON public.users USING btree (login);
 
 
 --
+-- Name: friendships fk_rails_2ed7e67632; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT fk_rails_2ed7e67632 FOREIGN KEY (member_id) REFERENCES public.members(id);
+
+
+--
 -- Name: headings fk_rails_60260ba0a3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.headings
     ADD CONSTRAINT fk_rails_60260ba0a3 FOREIGN KEY (member_id) REFERENCES public.members(id);
+
+
+--
+-- Name: friendships fk_rails_d78dc9c7fd; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.friendships
+    ADD CONSTRAINT fk_rails_d78dc9c7fd FOREIGN KEY (friend_id) REFERENCES public.members(id);
 
 
 --
@@ -246,6 +344,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210115041330'),
 ('20210115042707'),
 ('20210115050732'),
-('20210115051447');
+('20210115051447'),
+('20210118031122');
 
 
