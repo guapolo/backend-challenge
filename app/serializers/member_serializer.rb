@@ -12,7 +12,7 @@ class MemberSerializer
   end
 
   attribute :headings do |obj|
-    obj.headings.pluck(:text)
+    obj.headings.ordered.pluck(:text)
   end
 
   attributes :name, :short_url, :url

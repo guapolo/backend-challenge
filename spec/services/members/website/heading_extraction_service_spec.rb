@@ -49,7 +49,7 @@ describe Members::Website::HeadingExtractionService, :vcr do
       it "extracts and persists H1, H2 and H3 headers from the member's website" do
         member.reload
         expect(member.headings.size).to eq expected_headings.size
-        expect(member.headings.pluck(:text)).to eq expected_headings
+        expect(member.headings.ordered.pluck(:text)).to eq expected_headings
       end
     end
 

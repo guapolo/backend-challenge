@@ -121,7 +121,7 @@ resource 'api/v1/member' do
             attributes: {
               friends_count: member.friends.size,
               friends_pages: member.friends.pluck(:url),
-              headings: member.headings.pluck(:text),
+              headings: member.headings.ordered.pluck(:text),
               name: member.name,
               short_url: member.short_url,
               url: member.url

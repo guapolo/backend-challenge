@@ -6,5 +6,7 @@ scope :api do
 
     resources :friendships, only: [:create]
     resources :members
+
+    post :paths_to_experts_search, controller: :paths_to_experts, action: :search
   end
 end

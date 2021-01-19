@@ -44,7 +44,7 @@ docker run --name pg12 -p 5432:5432 -e POSTGRES_PASSWORD=123456 -e POSTGRES_USER
 docker run --name redis -p 6379:6379 -d redis:5-alpine
 
 # Gem installation (make sure it's v2.1+)
-gem install bundler
+gem install bundler foreman
 bundle
 
 # Base templates with necessary env vars
@@ -55,11 +55,14 @@ cp .env.test .env.test.local
 bin/rails db:create RAILS_ENV=test
 bin/rails db:setup
 
+# Use forman to run the app
+foreman start
+# or
+
 # Run the web server with:
 bundle exec puma -C config/puma.rb
-
 # Run Sidekiq workers
-bundle exec sidekiq -t 25
+bundle exec sidekiq -C config/sidekiq.yml -t 25
 ```
 
 ### Considerations when running migrations in development mode

@@ -31,6 +31,10 @@ errors: &errors
     :detail: Unable to make friends :'(
     :http_status: unprocessable_entity
     :title: Friendship creation failed
+  '300':
+    :detail: Topic is missing.
+    :http_status: unprocessable_entity
+    :title: Invalid search payload
   '666':
     :detail: Wrong username or password.
     :http_status: unauthorized
