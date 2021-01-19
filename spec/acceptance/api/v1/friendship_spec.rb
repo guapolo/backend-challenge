@@ -5,14 +5,12 @@ require 'rspec_api_documentation/dsl'
 require 'sidekiq/testing'
 require_relative '../../../support/helpers/api/v1/authorization'
 
-resource 'api/v1/friendship' do
+resource 'Friendship' do
   include Helpers::Api::V1
 
   let(:user) { FactoryBot.create(:user) }
   let(:bearer_token) { jwt_bearer_token(user) }
   let(:raw_post) { params.to_json }
-
-  explanation 'Friendship management'
 
   header 'Accept', 'application/vnd.api+json'
   header 'Content-Type', 'application/json'
@@ -45,7 +43,7 @@ resource 'api/v1/friendship' do
         other_member
       end
 
-      example 'Create a Member' do
+      example 'Make friends' do
         do_request(payload)
         expect(status).to eq 201
       end
@@ -76,7 +74,7 @@ resource 'api/v1/friendship' do
         }
       end
 
-      example 'Returns an error' do
+      example 'Member not found' do
         do_request(bad_payload)
         expect(response_body).to include_json(expected_response)
         expect(status).to eq 422

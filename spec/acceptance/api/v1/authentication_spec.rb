@@ -47,7 +47,7 @@ resource 'Authentication' do
           }
         end
 
-        example 'Returns an error message when credentials are missing' do
+        example 'Empty credentials' do
           do_request
           expect(response_body).to include_json(expected_response)
           expect(status).to eq 401
@@ -70,7 +70,7 @@ resource 'Authentication' do
           }
         end
 
-        example 'Returns an error message when credentials are missing' do
+        example 'Wrong username or password' do
           do_request
           expect(response_body).to include_json(expected_response)
           expect(status).to eq 401
@@ -94,7 +94,7 @@ resource 'Authentication' do
           }
         end
 
-        example 'Returns an error message when credentials are missing' do
+        example 'Returns an error message when a bad password is given' do
           do_request
           expect(response_body).to include_json(expected_response)
           expect(status).to eq 401

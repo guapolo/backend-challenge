@@ -5,18 +5,34 @@ require 'rspec_api_documentation/dsl'
 require 'sidekiq/testing'
 require_relative '../../../support/helpers/api/v1/authorization'
 
-resource 'api/v1/member' do
+resource 'Member' do
   include Helpers::Api::V1
 
   let(:user) { FactoryBot.create(:user) }
   let(:bearer_token) { jwt_bearer_token(user) }
   let(:raw_post) { params.to_json }
 
-  explanation 'Member management'
-
   header 'Accept', 'application/vnd.api+json'
   header 'Content-Type', 'application/json'
   header 'Authorization', :bearer_token
+
+  get '/api/v1/members' do
+    before do
+      create_list(:member, 5)
+    end
+
+    with_options scope: :data, with_example: true do
+      parameter :name, 'The name of the Member', required: true
+      parameter :url, 'The website URL of the Member', required: true
+    end
+
+    context '200' do
+      example 'List Members' do
+        do_request
+        expect(status).to eq 200
+      end
+    end
+  end
 
   post '/api/v1/members' do
     let(:name) { 'Rick Sanchez' }
@@ -84,7 +100,7 @@ resource 'api/v1/member' do
         }
       end
 
-      example 'Returns an error' do
+      example 'Member creation failed' do
         do_request(bad_payload)
         expect(response_body).to include_json(expected_response)
         expect(status).to eq 422
@@ -155,7 +171,7 @@ resource 'api/v1/member' do
         }
       end
 
-      example 'Returns an error' do
+      example 'Member not found' do
         do_request(id: 'foo')
         expect(response_body).to include_json(expected_response)
         expect(status).to eq 404

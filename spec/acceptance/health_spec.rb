@@ -11,7 +11,7 @@ resource 'Health' do
 
   get '/' do
     context '200' do
-      example 'Ping' do
+      example 'Ping the root path of the API' do
         do_request
 
         expect(status).to eq 200
@@ -22,7 +22,7 @@ resource 'Health' do
 
   get 'health/ping' do
     context '200' do
-      example 'Ping' do
+      example 'Ping health endpoint' do
         do_request
 
         expect(status).to eq 200

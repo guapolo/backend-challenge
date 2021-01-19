@@ -1,4 +1,4 @@
-Member.destroy_all
+User.create!(login: 'test_pilot', password: Rails.application.credentials.test_pilot_password)
 
 rick = Member.create!(name: 'Rick Sanchez', url: 'https://rickandmorty.fandom.com/wiki/Rick_Sanchez')
 doofus_rick = Member.create!(name: 'Rick Sanchez J19 Zeta 7', url: 'https://rickandmorty.fandom.com/wiki/Doofus_Rick')

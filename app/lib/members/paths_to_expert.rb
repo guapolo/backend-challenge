@@ -9,7 +9,6 @@ module Members
       @paths = []
       @topic = topic
 
-
       ::Member.not_friends_with_topics(member, topic).each do |other_member|
         path = member.shortest_path_to(other_member)
         paths << path if path.present?

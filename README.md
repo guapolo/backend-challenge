@@ -3,6 +3,7 @@
 ## Application stack
 
 - PostgreSQL v12+
+- Redis 5.0+
 - Ruby 2.7.2
 - Ruby on Rails 6.1
 
@@ -26,7 +27,8 @@ REDIS_URL=
 - Bundler 2.1+
 - Docker
 - Graphviz
-- RVM
+- [Homebrew](https://brew.sh)
+- [RVM](https://rvm.io)
 
 ### Setup
 
@@ -47,22 +49,41 @@ docker run --name redis -p 6379:6379 -d redis:5-alpine
 gem install bundler foreman
 bundle
 
-# Base templates with necessary env vars
-cp .env.development .env.development.local
-cp .env.test .env.test.local
+# If you need to add env variables use the base templates with necessary env vars
+# cp .env.development .env.development.local
+# cp .env.test .env.test.local
 
 #Setup the databases
-bin/rails db:create RAILS_ENV=test
-bin/rails db:setup
+bin/rails db:create db:schema:load RAILS_ENV=test
+bin/rails db:create db:schema:load
+
+# generate the api docs
+bin/rails docs:generate
+
+# Open the docs
+open docs/api/index.html
 
 # Use forman to run the app
 foreman start
 # or
-
+#
 # Run the web server with:
-bundle exec puma -C config/puma.rb
+# bundle exec puma -C config/puma.rb
+#
 # Run Sidekiq workers
-bundle exec sidekiq -C config/sidekiq.yml -t 25
+# bundle exec sidekiq -C config/sidekiq.yml -t 25
+
+# Check that the app is alive
+open http://0.0.0.0:5000
+
+# Seed the dev database, requires Sidekiq to be running to run some member creation tasks.
+# A user (login: test_pilot, password: see credentials.yml.enc file) will be created.
+bin/rails db:seed
+
+# Once DB seeding is done, you can generate a JWT token so you can run some requests to the API with your preferred tool.
+bin/rails runner 'puts Authorization.create_token(User.last)' > .jwt
+# There's also an authentication endpoint, in case you want to do all the auth dance to get a JWT. Please refer to the
+# docs or specs.
 ```
 
 ### Considerations when running migrations in development mode
@@ -71,15 +92,12 @@ Running `rails db:migrate` will update the `erd.png` diagram and annotate the mo
 
 ## Documentation
 
-### API Docs
-
-To generate the API documentation run `rake docs:generate`. The documentation can be found in [docs/api/index.html](docs/api/index.html). To browse the documentation, type `open docs/api/index.html` after generating it.
-
-API docs are created with the help of the [rspec_api_documentation](https://github.com/zipmark/rspec_api_documentation) gem.
-
-## Notes
+## Important Notes
 
 - I used Bitly instead of Google Shortener (the services is deprecated since 2018). An API key is provided in the credentials file to be used while reviewing the app.
+- The API conforms to the JSON API spec.
+- Generating the docs will allow you to copy-paste cURL commands with a valid JWT. To generate the API documentation run `bin/rails docs:generate`. The documentation can be found in [docs/api/index.html](docs/api/index.html). To browse the documentation, type `open docs/api/index.html` after generating it.
+- The requirements listed below have specs, the presentation ("views") are JSON documents since the project is a JSON API.
 
 ---
 

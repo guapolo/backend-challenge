@@ -7,8 +7,8 @@ RspecApiDocumentation.configure do |config|
   config.configurations_dir = Rails.root.join('docs', 'configurations', 'api')
   config.docs_dir = Rails.root.join('docs', 'api')
   config.format = %i[html open_api]
-  config.curl_host = 'http://localhost:3000'
-  config.curl_headers_to_filter = nil
+  config.curl_host = 'http://0.0.0.0:5000'
+  config.curl_headers_to_filter = ['Host', 'Cookie']
   config.request_headers_to_include = nil
   config.response_headers_to_include = nil
   config.api_name = 'Backend Challenge API Documentation'
